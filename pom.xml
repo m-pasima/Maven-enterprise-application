@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +14,7 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
-        <spring.boot.version>2.5.4</spring.boot.version>
+        <spring.boot.version>2.7.18</spring.boot.version>
         <hibernate.version>5.4.30.Final</hibernate.version>
         <junit.version>5.7.2</junit.version>
         <log4j.version>2.14.1</log4j.version>
@@ -25,12 +27,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
 
         <!-- Spring Boot Starter Data JPA for database integration -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
 
         <!-- H2 Database for testing -->
@@ -66,6 +70,14 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
+        <!-- Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -74,24 +86,42 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
+                <configuration>
+                    <!-- Make the application executable -->
+                    <executable>true</executable>
+                </configuration>
             </plugin>
 
-            <!-- Docker Plugin for Building Docker Image -->
+            <!-- Docker Plugin for Building Docker Image Locally -->
             <plugin>
-                <groupId>com.spotify</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>0.38.0</version>
                 <configuration>
-                    <imageName>your-docker-username/maven-enterprise-application</imageName>
+                    <!-- Build the Docker image locally without a username -->
+                    <imageName>maven-enterprise-application</imageName>
+                    
+                    <!-- Use the appropriate Docker Host depending on OS -->
+                    <dockerHost>${env.DOCKER_HOST}</dockerHost>
+                    
+                    <!-- Set the base directory to the root of the project -->
                     <dockerDirectory>${project.basedir}</dockerDirectory>
+
+                    <!-- Resources to include in the Docker image (JAR file) -->
                     <resources>
                         <resource>
-                            <directory>src/main/docker</directory>
-                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <includes>
+                                <include>*.jar</include>
+                            </includes>
+                            <targetPath>/app/</targetPath>
                         </resource>
                     </resources>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
+
