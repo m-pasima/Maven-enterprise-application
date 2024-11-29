@@ -27,7 +27,8 @@ public class HelloWorldControllerTest {
         // Mock the behavior of SomeService
         given(someService.getMessage()).willReturn("Hello, welcome to the Maven Enterprise Application!");
 
-        mockMvc.perform(get("/hello"))  // Perform a GET request to the "/hello" endpoint
+        // Perform a GET request to /hello and verify the response
+        mockMvc.perform(get("/hello"))  // Perform GET request to "/hello"
                 .andExpect(status().isOk())  // Expect HTTP status 200 (OK)
                 .andExpect(content().string("Hello, welcome to the Maven Enterprise Application!"));  // Expect the response content
     }

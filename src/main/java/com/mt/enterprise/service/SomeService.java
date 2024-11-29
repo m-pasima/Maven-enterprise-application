@@ -9,3 +9,4 @@ public class SomeService {
         return "Hello, welcome to the Maven Enterprise Application!";
     }
 }
+

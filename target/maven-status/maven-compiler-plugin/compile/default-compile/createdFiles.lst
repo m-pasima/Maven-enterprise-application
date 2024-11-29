@@ -1,4 +1,4 @@
-com\mt\enterprise\service\SomeService.class
-com\mt\enterprise\model\User.class
-com\mt\enterprise\controller\HelloWorldController.class
-com\mt\enterprise\MavenEnterpriseApplication.class
+com/mt/enterprise/service/SomeService.class
+com/mt/enterprise/controller/HelloWorldController.class
+com/mt/enterprise/model/User.class
+com/mt/enterprise/MavenEnterpriseApplication.class
