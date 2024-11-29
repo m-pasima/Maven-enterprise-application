@@ -1,127 +1,43 @@
 # Maven Enterprise Application
 
-This is a **Maven Enterprise Web Application** that leverages **Spring Boot**, **Maven**, and **Docker** for building and deploying a simple enterprise-level Java application. It includes RESTful services, database integration, and a full CI/CD pipeline with **Jenkins** and **Kubernetes** for deployment.
+This repository contains a **Spring Boot** based **Enterprise Application**. The application is built using **Maven** and can be packaged as a **Docker image** for local and cloud deployment. This guide will walk you through the steps to build, deploy, and run the application both locally and on an **EC2 Red Hat instance**.
 
-## Project Overview
+## Table of Contents
 
-The application demonstrates the following:
-- A **Spring Boot** application with **REST API** endpoints.
-- **H2 Database** integration for development and testing.
-- **JUnit 5** testing for API endpoints.
-- **Docker** to containerize the application.
-- **Kubernetes** for orchestration and deployment.
-- **Jenkins CI/CD** pipeline for automation.
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+  - [Directory Structure](#directory-structure)
+  - [Build and Run Locally](#build-and-run-locally)
+  - [Build Docker Image Locally](#build-docker-image-locally)
+  - [Run Docker Container Locally](#run-docker-container-locally)
+- [Deploy on EC2 Red Hat Server](#deploy-on-ec2-red-hat-server)
+  - [Install Docker on EC2](#install-docker-on-ec2)
+  - [Copy Project to EC2](#copy-project-to-ec2)
+  - [Build and Run Docker on EC2](#build-and-run-docker-on-ec2)
+  - [Access Application on EC2](#access-application-on-ec2)
+- [Optional: Using Docker Compose](#optional-using-docker-compose)
+- [Additional Notes](#additional-notes)
+- [Conclusion](#conclusion)
 
-### Technologies Used:
-- **Spring Boot**: For building the Java web application.
-- **Maven**: For project management and build automation.
-- **JUnit 5**: For writing unit and integration tests.
-- **Log4J**: For logging.
-- **H2 Database**: An in-memory database used for development and testing.
-- **Docker**: For creating a containerized application.
-- **Kubernetes**: For deploying and managing the application in a containerized environment.
-- **Jenkins**: For continuous integration and deployment automation.
 
-## Features:
-- **Spring Boot Starter Web**: To create a simple web application using Spring MVC.
-- **Spring Boot Starter Data JPA**: For easy integration with databases (H2 in this case).
-- **RESTful Endpoints**: Expose simple REST APIs like `/hello` to interact with the application.
-- **JUnit 5 Tests**: Unit tests for verifying controller functionality.
-- **Dockerized**: The application is containerized using Docker for easy deployment.
-- **Kubernetes Deployment**: The Docker container can be deployed to a Kubernetes cluster.
-- **Jenkins CI/CD Pipeline**: Automates the process of building, testing, and deploying the application.
+## Prerequisites
 
-## Setup and Installation
+Before starting, make sure the following software is installed:
 
-### Prerequisites:
-1. **Java 8 or newer**.
-2. **Maven** installed.
-3. **Docker** installed.
-4. **Kubernetes** cluster set up (for deployment).
-5. **Jenkins** set up (for CI/CD pipeline).
+- **Java 1.8 or later**
+- **Maven 3.6.x or later**
+- **Docker** (for building and running the Docker container)
+- **AWS EC2 instance (Red Hat)** with **Docker** installed
 
-### Steps:
+## Getting Started
 
-1. **Clone the repository:**
+### Directory Structure
 
-    ```bash
-    git clone https://github.com/m-pasima/maven-enterprise-application.git
-    cd maven-enterprise-application
-    ```
-
-2. **Ensure Maven, Java, Docker, and Kubernetes are installed:**
-
-    ```bash
-    mvn -v
-    java -version
-    docker -v
-    kubectl version --client
-    ```
-
-3. **Build the Maven project:**
-
-    Run the following command to compile the code, run tests, and package the application:
-
-    ```bash
-    mvn clean install
-    ```
-
-4. **Run the application locally with Maven (Spring Boot):**
-
-    ```bash
-    mvn spring-boot:run
-    ```
-
-    The application will be available at `http://localhost:8080/`.
-
-5. **Dockerize the application:**
-
-    - **Build the Docker image:**
-
-        ```bash
-        docker build -t your-docker-username/maven-enterprise-application .
-        ```
-
-    - **Run the Docker container:**
-
-        ```bash
-        docker run -p 8080:8080 your-docker-username/maven-enterprise-application
-        ```
-
-        The application will be accessible at `http://localhost:8080/` inside the Docker container.
-
-6. **Deploy the application to Kubernetes:**
-
-    - **Create the Kubernetes deployment file** (`deployment.yaml`).
-
-    - **Apply the deployment to the Kubernetes cluster:**
-
-        ```bash
-        kubectl apply -f deployment.yaml
-        ```
-
-    The application will be deployed to the Kubernetes cluster, and you can access it via the exposed service.
-
-7. **Run the Jenkins pipeline:**
-
-    - **Create the Jenkinsfile** for automation.
-    - **Set up Docker and Kubernetes credentials** in Jenkins.
-    - **Run the Jenkins pipeline** to automate the build, Docker image creation, and Kubernetes deployment.
-
-    The Jenkins pipeline will:
-    - Clone the repository.
-    - Build the application with Maven.
-    - Build the Docker image and push it to a container registry.
-    - Deploy the image to the Kubernetes cluster.
-
-## Directory Structure
+Here is the directory structure of the project:
 
 ```
 maven-enterprise-application/
-├── Dockerfile                    # Dockerfile to build the application container
-├── Jenkinsfile                   # Jenkins pipeline configuration
-├── README.md                     # Project documentation
-├── pom.xml                       # Maven configuration
+│
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -129,58 +45,200 @@ maven-enterprise-application/
 │   │   │       └── mt/
 │   │   │           └── enterprise/
 │   │   │               ├── controller/
-│   │   │               │   └── HelloWorldController.java
 │   │   │               ├── model/
-│   │   │               │   └── User.java
 │   │   │               └── service/
-│   │   │                   └── HelloWorldService.java
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── data.sql
+│   │   ├── resources/
 │   └── test/
 │       └── java/
 │           └── com/
 │               └── mt/
 │                   └── enterprise/
-│                       └── HelloWorldControllerTest.java
-└── target/                       # Generated files after building (e.g., JAR file)
+│
+├── target/                    # Compiled classes and packaged JARs
+│
+├── Dockerfile                 # Defines how the Docker image is built
+└── pom.xml                    # Maven configuration
 ```
 
-## Running in a Servlet Container
+### Build and Run Locally
 
-To deploy this application in a servlet container like **Tomcat**, you can package it as a WAR file:
+Follow these steps to build and run the application locally.
+
+#### 1. Clone the Repository
+
+Clone the repository to your local machine:
 
 ```bash
-mvn clean package
+git clone <repository-url>
+cd maven-enterprise-application
 ```
 
-This will generate a `maven-enterprise-application-0.0.1-SNAPSHOT.war` file in the `target/` directory. You can deploy this WAR file to your servlet container.
+#### 2. Build the Spring Boot Application
 
-## Jenkins Pipeline for CI/CD
+Run the following Maven command to build the application and package it as a JAR file:
 
-1. **Jenkins Setup**:
-   - Ensure you have Docker and Kubernetes installed on the Jenkins agent.
-   - Store Docker credentials (`DOCKER_USERNAME`, `DOCKER_PASSWORD`) and Kubernetes configurations securely in Jenkins.
+```bash
+mvn clean install
+```
 
-2. **Jenkins Pipeline Steps**:
-   - **Clone the Repository**.
-   - **Build the application** using Maven.
-   - **Build the Docker image** using the Dockerfile.
-   - **Push the Docker image** to Docker Hub or another container registry.
-   - **Deploy the image to Kubernetes** using `kubectl`.
+This will generate a `.jar` file in the `target/` directory.
 
-## Contributing
+#### 3. Build Docker Image Locally
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -am 'Add feature'`).
-4. Push to your fork (`git push origin feature-branch`).
-5. Open a Pull Request.
+To build the Docker image locally, use the following Maven command:
 
-## License
+```bash
+mvn docker:build
+```
 
-This project is open-source and available under the **MIT License**.
+This will create a Docker image named `maven-enterprise-application`.
+
+#### 4. Run Docker Container Locally
+
+After building the Docker image, you can run the container locally by executing:
+
+```bash
+docker run -p 8080:8080 maven-enterprise-application
+```
+
+This will expose the application on port `8080` of your local machine.
+
+#### 5. Access the Application Locally
+
+Once the Docker container is running, you can access your application by opening a browser and navigating to:
+
+```
+http://localhost:8080
+```
 
 ---
 
-This `README.md` file covers the entire process from setup to deployment, and explains how to run the application locally, dockerize it, deploy it to Kubernetes, and automate the process using Jenkins.
+## Deploy on EC2 Red Hat Server
+
+### 1. Create and Launch a Red Hat EC2 Instance
+
+- Log in to your AWS console and create a **Red Hat EC2 instance**.
+- Ensure the **Security Group** allows inbound traffic on port `8080` (or the port you choose to expose for your application).
+- Connect to your EC2 instance using SSH.
+
+### 2. Install Docker on EC2
+
+Once connected to your EC2 instance, run the following commands to install Docker:
+
+```bash
+sudo yum update -y
+sudo amazon-linux-extras install docker
+sudo service docker start
+sudo usermod -aG docker ec2-user
+```
+
+- **Start Docker**: `sudo service docker start`
+- **Add your EC2 user to the Docker group** to avoid needing `sudo` for Docker commands: `sudo usermod -aG docker ec2-user`
+- **Log out and log back in** to ensure the Docker group permissions take effect.
+
+Check Docker installation:
+
+```bash
+docker --version
+docker info
+```
+
+### 3. Copy Project to EC2
+
+You can copy the project to your EC2 instance using `scp` or `rsync`. Here's how to use `scp`:
+
+```bash
+scp -i your-key.pem -r /path/to/your/project ec2-user@<EC2-PUBLIC-IP>:/home/ec2-user/
+```
+
+Alternatively, you can clone the Git repository directly on the EC2 instance:
+
+```bash
+git clone <https://github.com/m-pasima/Maven-enterprise-application>
+cd maven-enterprise-application
+```
+
+### 4. Build and Run Docker on EC2
+
+Once the project is on your EC2 instance, you need to install Maven (if not already installed) and build the project.
+
+#### Install Maven on EC2:
+
+```bash
+sudo yum install maven -y
+```
+
+#### Build the project and Docker image:
+
+```bash
+mvn clean install
+mvn docker:build
+```
+
+### 5. Run Docker Container on EC2
+
+After successfully building the Docker image on the EC2 instance, run the following command to start the Docker container:
+
+```bash
+docker run -p 8080:8080 maven-enterprise-application
+```
+
+This will start the container and expose the application on port `8080` of the EC2 instance.
+
+### 6. Access the Application on EC2
+
+To access the application, open your web browser and navigate to:
+
+```
+http://<EC2-PUBLIC-IP>:8080
+```
+
+Replace `<EC2-PUBLIC-IP>` with your EC2 instance’s public IP address.
+
+---
+
+## Optional: Using Docker Compose
+
+If you plan to run multiple services or configurations, you can use **Docker Compose**. This tool allows you to define multi-container applications. Here's how you can use Docker Compose for your application:
+
+1. **Create a `docker-compose.yml` file**:
+
+```yaml
+version: '3'
+services:
+  app:
+    image: maven-enterprise-application
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile
+```
+
+2. **Run Docker Compose**:
+
+If you want to use Docker Compose for local testing or on your EC2 instance:
+
+```bash
+docker-compose up --build
+```
+
+This will build the image and start the container using Docker Compose.
+
+---
+
+## Additional Notes
+
+- **Dockerfile**: Ensure that your `Dockerfile` is properly set up in the project directory. This file defines how the Docker image is built and run.
+  
+- **Ports**: Make sure the EC2 instance's security group is configured to allow inbound traffic on the ports you are using (e.g., port `8080`).
+
+- **Production Deployment**: For production environments, consider using **AWS ECS** or **EKS** for managing containerized applications.
+
+- **Local Development**: When working locally, you can run the application using Docker or use Maven to run the Spring Boot app directly (without Docker).
+
+---
+
+## Conclusion
+
+This guide has shown how to build, deploy, and run your **Maven Enterprise Application** as a Docker container both locally and on an **EC2 Red Hat instance**. Docker provides a consistent environment for development and production, and using EC2 for deployment helps in scaling your application efficiently.
