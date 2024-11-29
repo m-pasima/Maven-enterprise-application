@@ -155,7 +155,7 @@ Alternatively, you can clone the Git repository directly on the EC2 instance:
 
 ```bash
 git clone https://github.com/m-pasima/Maven-enterprise-application
-cd maven-enterprise-application
+cd Maven-enterprise-application
 ```
 
 ### 4. Build and Run Docker on EC2
