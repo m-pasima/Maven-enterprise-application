@@ -69,7 +69,7 @@ Follow these steps to build and run the application locally.
 Clone the repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/m-pasima/Maven-enterprise-application>
 cd maven-enterprise-application
 ```
 
