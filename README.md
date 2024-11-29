@@ -121,27 +121,84 @@ http://localhost:8080
 - Ensure the **Security Group** allows inbound traffic on port `8080` (or the port you choose to expose for your application).
 - Connect to your EC2 instance using SSH.
 
+
 ### 2. Install Docker on EC2
 
-Once connected to your EC2 instance, run the following commands to install Docker:
+Once connected to your EC2 instance, follow these steps to install Docker:
 
-```bash
-sudo yum update -y
-sudo amazon-linux-extras install docker
-sudo service docker start
-sudo usermod -aG docker ec2-user
-```
+#### For **RedHat-based Systems (RHEL 8/9 or Amazon Linux 2)**:
 
-- **Start Docker**: `sudo service docker start`
-- **Add your EC2 user to the Docker group** to avoid needing `sudo` for Docker commands: `sudo usermod -aG docker ec2-user`
-- **Log out and log back in** to ensure the Docker group permissions take effect.
+1. **Update the system**:
 
-Check Docker installation:
+    ```bash
+    sudo yum update -y
+    ```
+
+2. **Remove any existing conflicting packages** (Podman, podman-docker):
+
+    If you have `Podman` or `podman-docker` installed (which comes pre-installed in some RedHat-based systems), remove them first:
+
+    ```bash
+    sudo yum remove -y podman podman-docker
+    ```
+
+3. **Install Docker dependencies**:
+
+    Install the required dependencies for Docker:
+
+    ```bash
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+    ```
+
+4. **Add Docker repository**:
+
+    Add the Docker CE repository for your system:
+
+    ```bash
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    ```
+
+5. **Install Docker**:
+
+    Install Docker Community Edition:
+
+    ```bash
+    sudo yum install -y docker-ce docker-ce-cli containerd.io
+    ```
+
+6. **Start Docker service**:
+
+    Start Docker and enable it to run on system boot:
+
+    ```bash
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    ```
+
+7. **Add your EC2 user to the Docker group**:
+
+    To avoid needing `sudo` for Docker commands, add the EC2 user to the Docker group:
+
+    ```bash
+    sudo usermod -aG docker ec2-user
+    ```
+
+8. **Log out and log back in**:
+
+    Log out and log back into your EC2 instance to apply the group membership changes.
+
+#### Verifying Docker Installation:
+
+Check the installed Docker version:
 
 ```bash
 docker --version
 docker info
 ```
+
+If Docker is properly installed, you should see details about Docker's version and status.
+
+---
 
 ### 3. Copy Project to EC2
 
