@@ -69,7 +69,7 @@ Follow these steps to build and run the application locally.
 Clone the repository to your local machine:
 
 ```bash
-git clone <https://github.com/m-pasima/Maven-enterprise-application>
+git clone https://github.com/m-pasima/Maven-enterprise-application
 cd maven-enterprise-application
 ```
 
@@ -154,7 +154,7 @@ scp -i your-key.pem -r /path/to/your/project ec2-user@<EC2-PUBLIC-IP>:/home/ec2-
 Alternatively, you can clone the Git repository directly on the EC2 instance:
 
 ```bash
-git clone <https://github.com/m-pasima/Maven-enterprise-application>
+git clone https://github.com/m-pasima/Maven-enterprise-application
 cd maven-enterprise-application
 ```
 
