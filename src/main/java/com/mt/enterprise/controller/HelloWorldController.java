@@ -1,6 +1,6 @@
 package com.mt.enterprise.controller;
 
-import com.mt.enterprise.service.SomeService;  // Import the service
+import com.mt.enterprise.service.SomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +17,6 @@ public class HelloWorldController {
 
     @GetMapping("/hello")
     public String hello() {
-        return someService.getMessage();  // Return message from service
+        return someService.getMessage();
     }
 }
