@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-academy-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-academy
+  template:
+    metadata:
+      labels:
+        app: devops-academy
+    spec:
+      containers:
+        - name: devops-academy
+          image: devops-academy/maven-enterprise-application:latest
+          ports:
+            - containerPort: 8080
