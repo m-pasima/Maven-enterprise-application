@@ -1,6 +1,6 @@
-# Maven Enterprise Application
+# DevOps Academy Application
 
-This repository contains a **Spring Boot** based **Enterprise Application**. The application is built using **Maven** and can be packaged as a **Docker image** for local and cloud deployment. This guide will walk you through the steps to build, deploy, and run the application both locally and on an **EC2 Red Hat instance**.
+This project provides a **Spring Boot** application for the *DevOps Academy*. It includes a small dynamic website where kids can explore coding by interacting with a simple API. The application is built using **Maven**, containerized with **Docker**, and can be deployed to **Kubernetes**.
 
 ## Table of Contents
 
@@ -10,6 +10,7 @@ This repository contains a **Spring Boot** based **Enterprise Application**. The
   - [Build and Run Locally](#build-and-run-locally)
   - [Build Docker Image Locally](#build-docker-image-locally)
   - [Run Docker Container Locally](#run-docker-container-locally)
+  - [Deploy with Kubernetes](#deploy-with-kubernetes)
 - [Deploy on EC2 Red Hat Server](#deploy-on-ec2-red-hat-server)
   - [Install Docker on EC2](#install-docker-on-ec2)
   - [Copy Project to EC2](#copy-project-to-ec2)
@@ -57,6 +58,7 @@ maven-enterprise-application/
 ├── target/                    # Compiled classes and packaged JARs
 │
 ├── Dockerfile                 # Defines how the Docker image is built
+├── k8s/                       # Kubernetes manifests
 └── pom.xml                    # Maven configuration
 ```
 
@@ -85,21 +87,24 @@ This will generate a `.jar` file in the `target/` directory.
 
 #### 3. Build Docker Image Locally
 
-To build the Docker image locally, use the following Maven command:
+Package the application and build the Docker image:
 
 ```bash
-mvn docker:build
+mvn clean package
+docker build -t devops-academy .
 ```
 
-This will create a Docker image named `maven-enterprise-application`.
+This will create a Docker image named `devops-academy`.
 
 #### 4. Run Docker Container Locally
 
 After building the Docker image, you can run the container locally by executing:
 
 ```bash
-docker run -p 8080:8080 maven-enterprise-application
+docker run -p 8080:8080 devops-academy
 ```
+
+The command above runs the `devops-academy` image on port `8080`.
 
 This will expose the application on port `8080` of your local machine.
 
@@ -110,6 +115,19 @@ Once the Docker container is running, you can access your application by opening
 ```
 http://localhost:8080
 ```
+
+The home page displays a simple website where kids can click a button to fetch a greeting from the API.
+
+### Deploy with Kubernetes
+
+If you have a Kubernetes cluster, deploy the application using the manifests in the `k8s/` directory:
+
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+The service exposes the application on port `80`.
 
 ---
 
@@ -237,7 +255,7 @@ mvn docker:build
 After successfully building the Docker image on the EC2 instance, run the following command to start the Docker container:
 
 ```bash
-docker run -p 8080:8080 maven-enterprise-application
+docker run -p 8080:8080 devops-academy
 ```
 
 This will start the container and expose the application on port `8080` of the EC2 instance.
