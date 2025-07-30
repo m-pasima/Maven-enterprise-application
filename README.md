@@ -101,7 +101,7 @@ This will create a Docker image named `devops-academy`.
 After building the Docker image, you can run the container locally by executing:
 
 ```bash
-docker run -p 8080:8080 devops-academy
+docker run -d -p 8080:8080 devops-academy
 ```
 
 The command above runs the `devops-academy` image on port `8080`.
